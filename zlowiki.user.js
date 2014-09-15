@@ -26,13 +26,7 @@
 // host a pic
 (function() {
 	var host = 'http://i.zlowiki.ru/';
-	var places = document.getElementsByTagName('textarea');
-	for (var i=0; i<places.length; i++) {
-		if (places[i].name == 'bb0dy') {
-		//if (places[i].name == 'post' && places[i].type == 'submit') {
-			var place = places[i];
-		}
-	}
+	var place = document.getElementsByName('bb0dy')[0];
 	if (!place) return false;
 
 	var frame = document.createElement('iframe');
