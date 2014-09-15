@@ -22,7 +22,9 @@
 // 16.06.2013 [+] (broken) ссылка на приват в заголовке сообщения (latin alphabetic only)
 // 28.03.2014 [+] coub, vimeo embedding
 
-(function() { // host a pic
+
+// host a pic
+(function() {
 	var host = 'http://i.zlowiki.ru/';
 	var places = document.getElementsByTagName('textarea');
 	for (var i=0; i<places.length; i++) {
@@ -53,29 +55,45 @@
 	}, false);
 }) ();
 
-(function() { // embed youtube, coub, vimeo
+
+// embed youtube, coub, vimeo
+(function() {
 	var page_links = document.links;
     var width = 640;
     var height = 360;
-    var proportions = 'width="' + width + '" height="' + height + '"';
+    var sizes = 'width="' + width + '" height="' + height + '"';	
+	var sites = [
+		{
+			're'             : /(?:youtube.com\/watch\?\S*v=|youtu.be\/)([\w-]+)/i,
+			'iframe_div_pre' : '<iframe ' + sizes + ' src="http://www.youtube.com/embed/',
+			'iframe_div_post': '" frameborder="0"></iframe>'
+		},
+		{
+			're'             : /(?:coub.com\/view\/)([\w-]+)/i,
+			'iframe_div_pre' : '<iframe ' + sizes + ' src="http://coub.com/embed/',
+			'iframe_div_post': '?muted=false&amp;autostart=false&originalSize=true&hideTopBar=false&noSiteButtons=true&startWithHD=true" allowfullscreen="true" frameborder="0"></iframe>'
+		},
+		{
+			're'             : /(?:vimeo.com\/)([0-9]+)/i,
+			'iframe_div_pre' : '<iframe ' + sizes + ' src="//player.vimeo.com/video/',
+			'iframe_div_post': '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+		}
+	]
+	
 	for (var i = 0; i < page_links.length; i++) {
-		if (id = page_links[i].href.match(/(?:youtube.com\/watch\?\S*v=|youtu.be\/)([\w-]+)/i)) {
-			var div = document.createElement('div');
-			div.innerHTML = '<iframe ' + proportions + ' src="http://www.youtube.com/embed/' + id[1] + '" frameborder="0"></iframe>';
-			page_links[i].parentNode.insertBefore(div, page_links[i].nextSibling);
-		} else if (id = page_links[i].href.match(/(?:coub.com\/view\/)([\w-]+)/i)) {
-            var div = document.createElement('div');
-            div.innerHTML = '<iframe ' + proportions + ' src="http://coub.com/embed/' + id[1] + '?muted=false&amp;autostart=false&originalSize=true&hideTopBar=false&noSiteButtons=true&startWithHD=true" allowfullscreen="true" frameborder="0"></iframe>'
-            page_links[i].parentNode.insertBefore(div, page_links[i].nextSibling);
-        } else if (id = page_links[i].href.match(/(?:vimeo.com\/)([0-9]+)/i)) {
-			var div = document.createElement('div');
-			div.innerHTML = '<iframe ' + proportions + ' src="//player.vimeo.com/video/' + id[1] + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
-			page_links[i].parentNode.insertBefore(div, page_links[i].nextSibling);
-        }
-	}
+	for (var j = 0; j < sites.length; j++) {
+		if (id = page_links[i].href.match(sites[j].re)) {
+			var embed_div = document.createElement('div');
+			embed_div.innerHTML = sites[j].iframe_div_pre + id[1] + sites[j].iframe_div_post;
+			page_links[i].parentNode.insertBefore(embed_div, page_links[i].nextSibling);
+			break;
+	}}}
 }) ();
 
-(function() { //user search link next to his nick
+
+
+//user search link next to his nick
+(function() {
 	var new_span = document.createElement('span');
 	var body = document.getElementsByClassName('body');
 	var parentDiv = body[0].parentNode;
