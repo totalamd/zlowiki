@@ -57,37 +57,40 @@ const l = function(){}, i = function(){};
 
 // embed youtube, coub, vimeo
 (function() {
-	var page_links = document.links;
-    var width = 640;
-    var height = 360;
-    var sizes = 'width="' + width + '" height="' + height + '"';	
-	var sites = [
+	const width = 640;
+	const height = 360;
+	const linksList = Array.from(document.querySelectorAll('.body a'));
+	const servicesList = [
 		{
-			're'             : /(?:youtube.com\/watch\?\S*v=|youtu.be\/)([\w-]+)/i,
-			'iframe_div_pre' : '<iframe ' + sizes + ' src="http://www.youtube.com/embed/',
-			'iframe_div_post': '" frameborder="0"></iframe>'
+			're'	:	/(?:youtube.com\/watch\?\S*v=|youtu.be\/)([\w-]+)/i,
+			'src'	:	'//youtube.com/embed/'
 		},
 		{
-			're'             : /(?:coub.com\/view\/)([\w-]+)/i,
-			'iframe_div_pre' : '<iframe ' + sizes + ' src="http://coub.com/embed/',
-			'iframe_div_post': '?muted=false&amp;autostart=false&originalSize=true&hideTopBar=false&noSiteButtons=true&startWithHD=true" allowfullscreen="true" frameborder="0"></iframe>'
+			're'	:	/(?:coub.com\/view\/)([\w-]+)/i,
+			'src'	:	'//coub.com/embed/'
 		},
 		{
-			're'             : /(?:vimeo.com\/)([0-9]+)/i,
-			'iframe_div_pre' : '<iframe ' + sizes + ' src="//player.vimeo.com/video/',
-			'iframe_div_post': '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+			're'	:	/(?:vimeo.com\/)([0-9]+)/i,
+			'src'	:	'//player.vimeo.com/video/'
 		}
-	]
-	
-	for (var i = 0; i < page_links.length; i++) {
-	for (var j = 0; j < sites.length; j++) {
-		if (id = page_links[i].href.match(sites[j].re)) {
-			var embed_div = document.createElement('div');
-			embed_div.innerHTML = sites[j].iframe_div_pre + id[1] + sites[j].iframe_div_post;
-			page_links[i].parentNode.insertBefore(embed_div, page_links[i].nextSibling);
-			break;
-	}}}
-}) ();
+	];
+
+	linksList.forEach(function (link) {
+		servicesList.forEach(function (service) {
+			if (link.href.match(service.re)) {
+				const mediaId = link.href.match(service.re)[1];
+				const frame = document.createElement('iframe');
+				frame.src = service.src + mediaId;
+				frame.allowFullscreen = true;
+				frame.frameBorder = 0;
+				frame.style.display = 'block';
+				frame.style.width = width + 'px';
+				frame.style.height = height + 'px';
+				link.parentNode.insertBefore(frame, link.nextSibling);
+			}
+		});
+	});
+})();
 
 
 
