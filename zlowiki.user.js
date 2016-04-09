@@ -26,14 +26,19 @@
 // * заменить "Не проверять IP" на <lable for=''></>
 // * скрывать треды по авторам и паттернам
 
+"use strict";
+
+const l = function(){}, i = function(){};
+// const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = console.info.bind(console, `${GM_info.script.name} debug:`);
+
 // host a pic
 (function() {
-	var host = 'http://i.zlowiki.ru/';
-	var place = document.getElementsByName('bb0dy')[0];
+	const HOST = 'http://i.zlowiki.ru/';
+	const place = document.getElementsByName('bb0dy')[0];
 	if (!place) return false;
 
-	var frame = document.createElement('iframe');
-	frame.src = host + 'i';
+	const frame = document.createElement('iframe');
+	frame.src = HOST + 'i';
 	frame.style.display = 'block';
 	frame.style.width = '600px';
 	frame.style.height = '100px';
@@ -43,14 +48,11 @@
 	place.parentNode.appendChild(frame);
 	
 	window.addEventListener('message', function(e) {
-		var data = eval('('+e.data+')');
-		var s = (data.all) ? data.all.url : '[pic]' + host + data.files[0].name+'[/pic]\n';
-		var areas = document.getElementsByTagName('textarea');
-		for (var i = 0; i < areas.length; i++) {
-			 areas[i].value += s.replace('\t', '\n'); 
-		}
+		const data = JSON.parse(e.data.replace(/\t/g, '\\t'));
+		const s = (data.all) ? data.all.url : `[pic]${HOST}${data.files[0].name}[/pic]\n`;
+		place.value += s.replace('\t', '\n');
 	}, false);
-}) ();
+})();
 
 
 // embed youtube, coub, vimeo
