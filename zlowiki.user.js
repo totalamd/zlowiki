@@ -75,8 +75,8 @@ const l = function(){}, i = function(){};
 		}
 	];
 
-	linksList.forEach(function (link) {
-		servicesList.forEach(function (service) {
+	linksList.forEach((link) => {
+		servicesList.some((service) => {
 			if (link.href.match(service.re)) {
 				const mediaId = link.href.match(service.re)[1];
 				const frame = document.createElement('iframe');
@@ -87,6 +87,7 @@ const l = function(){}, i = function(){};
 				frame.style.width = width + 'px';
 				frame.style.height = height + 'px';
 				link.parentNode.insertBefore(frame, link.nextSibling);
+				return true;
 			}
 		});
 	});
