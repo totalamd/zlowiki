@@ -6,14 +6,10 @@
 // @author           http://zlo.rt.mipt.ru/?persmsgform=Rustem
 // @author           http://zlo.rt.mipt.ru/?persmsgform=FastFlood
 //
-// @include          http://board.rt.mipt.ru/*
-// @include          http://zlo.rt.mipt.ru/*
-// @include          http://board.rt.mipt.ru./*
-// @include          http://zlo.rt.mipt.ru./*
-// @include          http://x.zlowiki.ru/*
-// @include          http://frike.ru/*
-// @include          http://takeoff.mipt.ru/*
-// @include          http://www.takeoff.mipt.ru/*
+// @match          *://board.rt.mipt.ru/*
+// @match          *://zlo.rt.mipt.ru/*
+// @match          *://x.mipt.cc/*
+// @match          *://anime.mipt.cc/*
 //
 // @grant            none
 // ==/UserScript==
