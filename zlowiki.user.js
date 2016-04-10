@@ -47,7 +47,7 @@ const l = function(){}, i = function(){};
 
 	place.parentNode.appendChild(frame);
 	
-	window.addEventListener('message', function(e) {
+	window.addEventListener('message', (e) => {
 		const data = JSON.parse(e.data.replace(/\t/g, '\\t'));
 		const s = (data.all) ? data.all.url : `[pic]${HOST}${data.files[0].name}[/pic]\n`;
 		place.value += s.replace('\t', '\n');
