@@ -93,56 +93,49 @@ const l = function(){}, i = function(){};
 
 //user search link next to his nick
 (function() {
-	var new_span = document.createElement('span');
-	var body = document.getElementsByClassName('body');
-	var parentDiv = body[0].parentNode;
-	parentDiv.insertBefore(new_span, body[0]);
+	let user_nick, user_host;
 	
+	if (!document.querySelector('.nn') && !document.querySelector('.unreg')) return false;
 	
-	var user_link = document.getElementsByClassName('nn');
-	var user_host = user_link[0].parentNode.innerHTML.match(/(?:<small>\()(.*)(?:\)<\/small>)/);
-		/*for (i = 0; i < user_host.length; i++) {
-		new_span.textContent += '__' + i + ': ' + user_host[i] + '';
-		}*/
-		
-	var user_nick = encodeURI(user_link[0].innerHTML);
-	var link1 = " <small><b><a target='_blank' href='http://zlo.rt.mipt.ru:7500/search?nick=" + user_nick + "'>?</a></b></small>";
-	var link2 = "<small><b><a target='_blank' href='http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=0&w=n&t=" + user_nick + "'>n</a></b></small>";
-	var link3 = "<small><b><a target='_blank' href='http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=0&w=h&t=" + user_host[1] + "'>h</a></b></small>";
-	var link4 = " <small><b><a target='_blank' title='Написать в приват' href='http://zlo.rt.mipt.ru/?persmsgform=" + encodeURI(user_nick) + "'>p</a></b></small>";
-	
-	//new_span.innerHTML += user_link[0].parentNode.innerHTML;
-	var r = user_link[0].parentNode.innerHTML.match(/(.*<\/small>)(.*)/);
-	/*for (i =0; i < r.length; i++) {
-		new_span.textContent += '__' + i + ': ' + r[i] + '';
-		}*/
-	 user_link[0].parentNode.innerHTML = r[1] + link1 + link2 + link3 + link4 + r[2];
-/*	s1 = document.createElement('span');
-	s1.textContent = '123';
-  user_link[0].parentNode.insertBefore(s1, user_link[0].nextSibling);*/
-	
-	var span_element = document.querySelectorAll('.reg, .own, .sel');
-	for (i = 0; i < span_element.length; i++) {
-			var nick = span_element[i].textContent;
-			var host = span_element[i].nextSibling.textContent.match(/(?:\()(.*)(?:\))/)[1];
-			var link1 = "<a target='_blank' href='http://zlo.rt.mipt.ru:7500/search?nick=" + nick + "'>?</a>";
-			var link2 = "<a target='_blank' href='http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=0&w=n&t=" + nick + "'>n</a>";
-			var link3 = "<a target='_blank' href='http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=0&w=h&t=" + host + "'>h</a>";
-			var insertion_point = span_element[i].nextSibling.textContent.match(/(.*\))(.*)/);
-			//console.log(insertion_point);
-			//span_element[i].nextSibling.innerHTML = link1;	
-//		else if (span_element[i].className != 'e' && span_element[i].className.length != 0) {console.log(i, span_element[i].className, span_element[i].textContent)}
-	}
-/*	var page_reg = document.getElementsByClassName('reg');
-	var page_own = document.getElementsByClassName('own');
-	var page_cel = document.getElementsByClassName('sel');*/
+	user_nick = document.querySelector('.nn') || document.querySelector('.unreg');		
+	user_nick.value = encodeURIComponent(user_nick.innerText);
+	user_host = document.querySelector('.nn + small') || document.querySelector('.unreg + small');
+	user_host.value = encodeURIComponent(user_host.innerText.slice(1, -1));
 
-/*
-	for (j = 0; j < page_reg.length; j++) {
-		var host = page_reg[j].textContent;
-		//var ip = page_reg[j].nextSibling.textContent.match(/(?:\()(.*)(?:\))/)[1];
-		page_reg[j]
-		//console.log(j + ' host: ' + host + ' ip: ' + ip);
-	}*/
+	const create_link = (url, text, title) => {
+		const a = document.createElement('a');
+		a.href = url;
+		a.text = text;
+		a.title = title;
+		a.target = '_blank';
+		a.style.color = 'green';
+		a.style.fontWeight = 'bold';
+		a.style.fontSize = 'small';
+		a.style.marginLeft = '0.2em';
+		return a;
+	};
+
+	const insertAfter = (what, where) => {
+		where.parentNode.insertBefore(what, where.nextSibling);
+	};
+
+	let siteSearch;
 	
-}) ();
+	switch (location.hostname) {
+		case 'x.mipt.cc':
+			siteSearch = 12;
+			break;
+		case 'anime.mipt.cc':
+			siteSearch = 3;
+			break;
+		case 'zlo.rt.mipt.ru':
+		case 'board.rt.mipt.ru':
+			siteSearch = 0;
+	}
+
+	insertAfter(create_link(`http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=n&t=${user_nick.value}`, 'h', 'Хосты этого ника'), user_nick);
+	insertAfter(create_link(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}`, '?', 'Сообщения этого пользователя'), user_nick);
+	insertAfter(create_link(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}&host=${user_host.value}`, '?nh', 'Сообщения этого ника с этого хоста'), user_host);
+	insertAfter(create_link(`http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=h&t=${user_host.value}`, 'n', 'Ники этого хоста'), user_host);
+	insertAfter(create_link(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&host=${user_host.value}`, '?', 'Сообщения с этого хоста'), user_host);
+})();
