@@ -2,25 +2,29 @@
 //
 // @name             updated zlowiki services
 // @namespace        http://zlowiki.ru
-// @description      updated zlowiki.ru services 
-// @author           http://zlo.rt.mipt.ru/?persmsgform=Rustem
-// @author           http://zlo.rt.mipt.ru/?persmsgform=FastFlood
+// @description      various features for zlo.rt.mipt.ru and other WWWConf engine forums
+// @description:ru   разные фичи для zlo.rt.mipt.ru и других форумов на движке WWWConf
+// @author           Автор идеи: http://zlo.rt.mipt.ru/?persmsgform=Rustem
+// @author           Допиливатель: http://zlo.rt.mipt.ru/?persmsgform=FastFlood
 //
-// @match          *://board.rt.mipt.ru/*
-// @match          *://zlo.rt.mipt.ru/*
-// @match          *://x.mipt.cc/*
-// @match          *://anime.mipt.cc/*
+// @match            *://(board|zlo).rt.mipt.ru/*
+// @match            *://x.mipt.cc/*
+// @match            *://anime.mipt.cc/*
 //
-// @grant            none
+// @grant            GM_addStyle
 // ==/UserScript==
 
 // UPGRADES:
 // 16.06.2013 [+] (broken) ссылка на приват в заголовке сообщения (latin alphabetic only)
 // 28.03.2014 [+] coub, vimeo embedding
+
 // TODO:
 // * стрелки вверх на родителя сообщения, стрелку вниз обратно к ребёнку
-// * заменить "Не проверять IP" на <lable for=''></>
+// * заменить "Не проверять IP" на <lable for=''></> и для "Автологин"
 // * скрывать треды по авторам и паттернам
+// * На авторе поста ссылки на поиск показывать всегда, на всех остальных -- по наведению
+// * Ссылка на persmsg=all
+
 
 "use strict";
 
