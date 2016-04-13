@@ -33,12 +33,12 @@ const l = function(){}, i = function(){};
 
 // host a pic
 (function() {
-	const HOST = 'http://i.zlowiki.ru/';
+	const host = 'http://i.zlowiki.ru/';
 	const place = document.getElementsByName('bb0dy')[0];
 	if (!place) return false;
 
 	const frame = document.createElement('iframe');
-	frame.src = HOST + 'i';
+	frame.src = host + 'i';
 	frame.style.display = 'block';
 	frame.style.width = '600px';
 	frame.style.height = '100px';
@@ -49,7 +49,7 @@ const l = function(){}, i = function(){};
 	
 	window.addEventListener('message', (e) => {
 		const data = JSON.parse(e.data.replace(/\t/g, '\\t'));
-		const s = (data.all) ? data.all.url : `[pic]${HOST}${data.files[0].name}[/pic]\n`;
+		const s = (data.all) ? data.all.url : `[pic]${host}${data.files[0].name}[/pic]\n`;
 		place.value += s.replace('\t', '\n');
 	}, false);
 })();
