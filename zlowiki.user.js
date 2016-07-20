@@ -1,11 +1,12 @@
 ﻿// ==UserScript==
 //
-// @name             updated zlowiki services
+// @name             Zlo Enhancement Suite
 // @namespace        http://zlowiki.ru
 // @description      various features for zlo.rt.mipt.ru and other WWWConf engine forums
 // @description:ru   разные фичи для zlo.rt.mipt.ru и других форумов на движке WWWConf
 // @author           Автор идеи: http://zlo.rt.mipt.ru/?persmsgform=Rustem
 // @author           Допиливатель: http://zlo.rt.mipt.ru/?persmsgform=FastFlood
+// @version    			 1.5.0.0
 //
 // @match            *://(board|zlo).rt.mipt.ru/*
 // @match            *://x.mipt.cc/*
@@ -24,12 +25,13 @@
 // * скрывать треды по авторам и паттернам
 // * На авторе поста ссылки на поиск показывать всегда, на всех остальных -- по наведению
 // * Ссылка на persmsg=all
+// * Починить ссылки на приват для кириллических имён пользователей
 
 
 "use strict";
 
-const l = function(){}, i = function(){};
-// const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = console.info.bind(console, `${GM_info.script.name} debug:`);
+// const l = function(){}, i = function(){};
+const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = console.info.bind(console, `${GM_info.script.name} debug:`);
 
 // host a pic
 (function() {
@@ -46,7 +48,7 @@ const l = function(){}, i = function(){};
 	frame.style.margin = '15px';
 
 	place.parentNode.appendChild(frame);
-	
+
 	window.addEventListener('message', (e) => {
 		const data = JSON.parse(e.data.replace(/\t/g, '\\t'));
 		const s = (data.all) ? data.all.url : `[pic]${host}${data.files[0].name}[/pic]\n`;
@@ -94,12 +96,11 @@ const l = function(){}, i = function(){};
 })();
 
 
-
 //user search link next to his nick
 (function() {
 	let siteSearch;
 	let user_nick, user_host;
-	
+
 	const createLink = (url, text, title, invisible) => {
 		const a = document.createElement('a');
 		a.href = url;
@@ -139,9 +140,12 @@ const l = function(){}, i = function(){};
 		a.user_search_invisible {
 			display: none;
 		}
-		span[id^="m"]:hover a.user_search_invisible {
+		.w:hover a.user_search_invisible, .g:hover a.user_search_invisible {
 			display: inline;
 		}
+		/*span[id^="m"]:hover a.user_search_invisible {
+			display: inline;
+		}*/
 	`);
 
 	// current message in particular thread handling
@@ -151,11 +155,36 @@ const l = function(){}, i = function(){};
 		user_host = document.querySelector('.nn + small') || document.querySelector('.unreg + small');
 		user_host.value = encodeURIComponent(user_host.innerText.slice(1, -1));
 
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=n&t=${user_nick.value}`, 'h', 'Хосты этого ника'), user_nick);
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}`, '?', 'Сообщения этого пользователя'), user_nick);
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}&host=${user_host.value}`, '?nh', 'Сообщения этого ника с этого хоста'), user_host);
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=h&t=${user_host.value}`, 'n', 'Ники этого хоста'), user_host);
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&host=${user_host.value}`, '?', 'Сообщения с этого хоста'), user_host);
+		[
+			{
+				url: `http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=n&t=${user_nick.value}`,
+				text: 'h',
+				title: 'Хосты этого ника',
+				where: user_nick
+			}, {
+				url: `http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}`,
+				text: '?',
+				title: 'Сообщения этого пользователя',
+				where: user_nick
+			}, {
+				url: `http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}&host=${user_host.value}`,
+				text: '?nh',
+				title: 'Сообщения этого ника с этого хоста',
+				where: user_host
+			}, {
+				url: `http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=h&t=${user_host.value}`,
+				text: 'n',
+				title: 'Ники этого хоста',
+				where: user_host
+			}, {
+				url: `http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&host=${user_host.value}`,
+				text: '?',
+				title: 'Сообщения с этого хоста',
+				where: user_host
+			}
+		].forEach(function (e) {
+			insertAfter(createLink(e.url, e.text, e.title), e.where);
+		})
 	}
 
 	// other messages handling, in individual thread and in global index
@@ -181,10 +210,114 @@ const l = function(){}, i = function(){};
 			break;
 		}
 
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}&host=${user_host.value}`, '?nh', 'Сообщения этого ника с этого хоста', true), where_to_post_links);
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=h&t=${user_host.value}`, 'n', 'Ники этого хоста', true), where_to_post_links);
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&host=${user_host.value}`, '| ?', 'Сообщения с этого хоста', true), where_to_post_links);
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=n&t=${user_nick.value}`, 'h', 'Хосты этого ника', true), where_to_post_links);
-		insertAfter(createLink(`http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}`, '?', 'Сообщения этого пользователя', true), where_to_post_links);
+		[
+			{
+				url: `http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}&host=${user_host.value}`,
+				text: '?nh',
+				title: 'Сообщения этого ника с этого хоста',
+				invisible: true,
+				where: where_to_post_links
+			}, {
+				url: `http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=h&t=${user_host.value}`,
+				text: 'n',
+				title: 'Ники этого хоста',
+				invisible: true,
+				where: where_to_post_links
+			}, {
+				url: `http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&host=${user_host.value}`,
+				text: '| ?',
+				title: 'Сообщения с этого хоста',
+				invisible: true,
+				where: where_to_post_links
+			}, {
+				url: `http://zlo.rt.mipt.ru:7500/nickhost.jsp?site=${siteSearch}&w=n&t=${user_nick.value}`,
+				text: 'h',
+				title: 'Хосты этого ника',
+				invisible: true,
+				where: where_to_post_links
+			}, {
+				url: `http://zlo.rt.mipt.ru:7500/search?site=${siteSearch}&nick=${user_nick.value}`,
+				text: '?',
+				title: 'Сообщения этого пользователя',
+				invisible: true,
+				where: where_to_post_links
+			}
+		].forEach(function (e) {
+			insertAfter(createLink(e.url, e.text, e.title, e.invisible), e.where);
 		});
+	});
+})();
+
+
+// add persmsg=all link
+// all labels to checkboxes
+(function(){
+	const wrapInLabel = (node, sibling) => {
+		const label = document.createElement('label');
+		const parent = node.parentNode;
+		if((sibling === 'nextSibling')||(sibling === 'nextElementSibling')) {
+			parent.insertBefore(label, node.nextSibling.nextSibling);
+			const sib = node[sibling];
+			label.appendChild(node);
+			label.appendChild(sib);
+		} else {
+			parent.insertBefore(label, node.nextSibling);
+			label.appendChild(node[sibling]);
+			label.appendChild(node);
+		}
+	}
+
+	if (location.hostname.match(/^(?:board|zlo)\.rt\.mipt\.ru/) && location.search === '?persmsg') {
+		const newPMlink = document.querySelector('a[href="?persmsgform"]');
+		const link = document.createElement('a');
+		link.href = '?persmsg=all';
+		link.text = 'Все персональные сообщения';
+		link.style.textDecoration = 'underline';
+		newPMlink.parentNode.insertBefore(link, newPMlink);
+		newPMlink.parentNode.insertBefore(document.createTextNode(' '), newPMlink);
+	}
+
+	[
+		{
+			selector: 'input[name="lmi"]',
+			sibling: 'previousElementSibling'
+		}, {
+			selector: 'input[name="ipoff"]',
+			sibling: 'nextSibling'
+		}, {
+			selector: 'input[name="dct"]',
+			sibling: 'previousSibling'
+		}, {
+			selector: 'input[name="dst"]',
+			sibling: 'previousSibling'
+		}, {
+			selector: 'input[name="wen"]',
+			sibling: 'previousSibling'
+		}
+	].forEach(function (e){
+		if (document.querySelector(e.selector)) {
+			wrapInLabel(document.querySelector(e.selector), e.sibling);
+		};
+	});
+})();
+
+
+// settings menu
+(function(){
+	const settings = {
+		init: () => {
+			const div = document.createElement('div');
+			
+		},
+		show: function () {
+			l(this.n);
+		},
+		n: 'qwe'
+	}
+
+	const settingsLink = document.createElement('a');
+	settingsLink.text = 'Настройки скрипта';
+	settingsLink.href = '#';
+	settingsLink.addEventListener('click', function(){settings.show()});
+	document.querySelector('.menu').appendChild(settingsLink);
 })();
