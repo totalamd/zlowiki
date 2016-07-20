@@ -34,7 +34,7 @@
 const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = console.info.bind(console, `${GM_info.script.name} debug:`);
 
 // host a pic
-(function() {
+(function () {
 	const host = 'http://i.zlowiki.ru/';
 	const place = document.getElementsByName('bb0dy')[0];
 	if (!place) return false;
@@ -58,22 +58,22 @@ const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = consol
 
 
 // embed youtube, coub, vimeo
-(function() {
+(function () {
 	const width = 640;
 	const height = 360;
 	const linksList = Array.from(document.querySelectorAll('.body a'));
 	const servicesList = [
 		{
-			're'	:	/(?:youtube.com\/watch\?\S*v=|youtu.be\/)([\w-]+)/i,
-			'src'	:	'//youtube.com/embed/'
+			're': /(?:youtube.com\/watch\?\S*v=|youtu.be\/)([\w-]+)/i,
+			'src': '//youtube.com/embed/'
 		},
 		{
-			're'	:	/(?:coub.com\/view\/)([\w-]+)/i,
-			'src'	:	'//coub.com/embed/'
+			're': /(?:coub.com\/view\/)([\w-]+)/i,
+			'src': '//coub.com/embed/'
 		},
 		{
-			're'	:	/(?:vimeo.com\/)([0-9]+)/i,
-			'src'	:	'//player.vimeo.com/video/'
+			're': /(?:vimeo.com\/)([0-9]+)/i,
+			'src': '//player.vimeo.com/video/'
 		}
 	];
 
@@ -97,7 +97,7 @@ const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = consol
 
 
 //user search link next to his nick
-(function() {
+(function () {
 	let siteSearch;
 	let user_nick, user_host;
 
@@ -150,7 +150,7 @@ const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = consol
 
 	// current message in particular thread handling
 	if (document.querySelector('.nn + small') || document.querySelector('.unreg + small')) {
-		user_nick = document.querySelector('.nn') || document.querySelector('.unreg');		
+		user_nick = document.querySelector('.nn') || document.querySelector('.unreg');
 		user_nick.value = encodeURIComponent(user_nick.innerText);
 		user_host = document.querySelector('.nn + small') || document.querySelector('.unreg + small');
 		user_host.value = encodeURIComponent(user_host.innerText.slice(1, -1));
@@ -193,21 +193,21 @@ const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = consol
 		let where_to_post_links;
 
 		switch (location.hostname) {
-		case 'zlo.rt.mipt.ru':
-		case 'board.rt.mipt.ru':
-			user_nick = post.lastElementChild;
-			user_nick.value = encodeURIComponent(user_nick.innerText);
-			user_host = post.lastChild;
-			user_host.value = encodeURIComponent(user_host.textContent.match(/.*\((.*)\).*/)[1]);
-			where_to_post_links = user_host;
-			break;
-		case 'x.mipt.cc':
-			user_nick = post.querySelector('.unr, .reg');
-			user_nick.value = encodeURIComponent(user_nick.innerText);
-			user_host = post.querySelector('span.nobr:nth-last-of-type(3)');
-			user_host.value = encodeURIComponent(user_host.textContent.match(/.*\((.*)\).*/)[1]);
-			where_to_post_links = post.lastChild;
-			break;
+			case 'zlo.rt.mipt.ru':
+			case 'board.rt.mipt.ru':
+				user_nick = post.lastElementChild;
+				user_nick.value = encodeURIComponent(user_nick.innerText);
+				user_host = post.lastChild;
+				user_host.value = encodeURIComponent(user_host.textContent.match(/.*\((.*)\).*/)[1]);
+				where_to_post_links = user_host;
+				break;
+			case 'x.mipt.cc':
+				user_nick = post.querySelector('.unr, .reg');
+				user_nick.value = encodeURIComponent(user_nick.innerText);
+				user_host = post.querySelector('span.nobr:nth-last-of-type(3)');
+				user_host.value = encodeURIComponent(user_host.textContent.match(/.*\((.*)\).*/)[1]);
+				where_to_post_links = post.lastChild;
+				break;
 		}
 
 		[
@@ -251,11 +251,11 @@ const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = consol
 
 // add persmsg=all link
 // all labels to checkboxes
-(function(){
+(function () {
 	const wrapInLabel = (node, sibling) => {
 		const label = document.createElement('label');
 		const parent = node.parentNode;
-		if((sibling === 'nextSibling')||(sibling === 'nextElementSibling')) {
+		if ((sibling === 'nextSibling') || (sibling === 'nextElementSibling')) {
 			parent.insertBefore(label, node.nextSibling.nextSibling);
 			const sib = node[sibling];
 			label.appendChild(node);
@@ -294,7 +294,7 @@ const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = consol
 			selector: 'input[name="wen"]',
 			sibling: 'previousSibling'
 		}
-	].forEach(function (e){
+	].forEach(function (e) {
 		if (document.querySelector(e.selector)) {
 			wrapInLabel(document.querySelector(e.selector), e.sibling);
 		};
@@ -303,11 +303,11 @@ const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = consol
 
 
 // settings menu
-(function(){
+(function () {
 	const settings = {
 		init: () => {
 			const div = document.createElement('div');
-			
+
 		},
 		show: function () {
 			l(this.n);
@@ -318,6 +318,6 @@ const l = console.log.bind(console, `${GM_info.script.name} debug:`), i = consol
 	const settingsLink = document.createElement('a');
 	settingsLink.text = 'Настройки скрипта';
 	settingsLink.href = '#';
-	settingsLink.addEventListener('click', function(){settings.show()});
+	settingsLink.addEventListener('click', function () { settings.show() });
 	document.querySelector('.menu').appendChild(settingsLink);
 })();
